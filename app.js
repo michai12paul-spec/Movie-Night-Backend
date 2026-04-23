@@ -64,3 +64,13 @@ app.get("/:type/p:page", (req, res) => {
     page = (page - 1) * pageSize
     getMovies(res, type, page)
 })
+
+app.get("/ratings/:type", (req, res) => {
+    let rating = parseFloat(req.params.rating)
+    let type = req.params.type.toLowerCase()
+   if (type != "movie" && type != "series") {
+        res.status(400).send({ "error": "Invalid URI" })
+        return
+    }
+    getRatedMovies(res, rating)
+})
