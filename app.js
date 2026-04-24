@@ -19,6 +19,7 @@ app.get('/test', (req, res) => {
     res.send('Test')
 })
 
+// Get a Movie/Series by id
 app.get("/info/:id", (req, res) => {
     let movieID = req.params.id
     if (!movieID || movieID.length != 24) {
@@ -28,10 +29,12 @@ app.get("/info/:id", (req, res) => {
     getMovie(res, movieID)
 })
 
+//Show all the favourites
 app.get("/faves/show", (req, res) => {
     getFaves(res)
 })
 
+//Add a Show to the favourites list by id
 app.post("/faves/add/:id", (req, res) => {
     let showID = req.params.id
     if (!showID || showID.length != 24)
@@ -40,6 +43,7 @@ app.post("/faves/add/:id", (req, res) => {
         addToFavs(res, showID)
 })
 
+// Get 10 Movies/Series
 app.get("/:type", (req, res) => {
     let type = req.params.type.toLowerCase()
     if (type != "movie" && type != "series") {
@@ -48,7 +52,7 @@ app.get("/:type", (req, res) => {
     }
     getMovies(res, type)
 })
-
+// Get 10 Movies/Series by pages 
 app.get("/:type/p:page", (req, res) => {
     const pageSize = 10
     let type = req.params.type.toLowerCase()
@@ -65,6 +69,7 @@ app.get("/:type/p:page", (req, res) => {
     getMovies(res, type, page)
 })
 
+//Get 10 Movies/Series by rating abouve 6
 app.get("/:rating/:type", (req, res) => {
     let rating = parseFloat(req.params.rating)
     if (isNaN(rating) || rating <= 0 || rating > 10) {
@@ -79,8 +84,8 @@ app.get("/:rating/:type", (req, res) => {
     getRatedMovies(res, type, 0, rating)
 })
 
+//Add a memo to a favourite movie/series by id
 app.put('/memo', (req, res) => {
-    //const {mID, memo} = req.body
     const data = req.body
     if (!data || !data.mID || !data.memo) {
         res.status(400).json({ error: "Corrupted or missing request data" })
@@ -91,4 +96,10 @@ app.put('/memo', (req, res) => {
         return
     }
     updateMemo(res, data.mID, data.memo)
+})
+
+//Delete a movie/series from the favourites list by id
+app.delete('/faves/remove', (req, res) => {
+    const data = req.body
+    deleteFromFaves(res, data.aID)
 })
