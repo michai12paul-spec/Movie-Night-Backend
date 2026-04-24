@@ -1,6 +1,6 @@
 import express from 'express'
 import { PORT } from './config.js'
-import { getFaves, getMovie, getMovies } from './readUtils.js'
+import { getFaves, getMovie, getMovies, getRatedMovies } from './readUtils.js'
 import { addToFavs } from './createUtils.js'
 import cors from 'cors'
 
@@ -65,8 +65,12 @@ app.get("/:type/p:page", (req, res) => {
     getMovies(res, type, page)
 })
 
-app.get("/ratings/:type", (req, res) => {
+app.get("/:rating/:type", (req, res) => {
     let rating = parseFloat(req.params.rating)
+    if (isNaN(rating)) {
+        res.status(400).send({ "error": "Invalid rating" })
+        return
+    }
     let type = req.params.type.toLowerCase()
    if (type != "movie" && type != "series") {
         res.status(400).send({ "error": "Invalid URI" })

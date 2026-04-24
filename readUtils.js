@@ -80,7 +80,7 @@ const getFaves = (res) => {
 }
 
 
-const getRatedMovies = (res, rating) => {
+const getRatedMovies = (res, type, page, rating) => {
     moviesCollection
 
         .find({ "imdb.rating": { $gte: rating } },
@@ -107,10 +107,10 @@ const getRatedMovies = (res, rating) => {
         .then(doc => {
             if (!doc)
                 doc = { "error": "no data found" }
-            if (doc.released) {
+            /*if (doc.released) {
                 doc.released = format(doc.released, "MMM DD, YYYY")
                 console.log(doc.released)
-            }
+            }*/
             res.status(200).json(doc)
         })
     }
