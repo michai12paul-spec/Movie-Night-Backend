@@ -1,7 +1,7 @@
 import express from 'express'
 import { PORT } from './config.js'
 import { getFaves, getMovie, getMovies, getRatedMovies } from './readUtils.js'
-import { addToFavs } from './createUtils.js'
+import { addToFavs, updateMemo} from './createUtils.js'
 import cors from 'cors'
 
 const app = express()
@@ -77,4 +77,18 @@ app.get("/:rating/:type", (req, res) => {
         return
     }
     getRatedMovies(res, type, 0, rating)
+})
+
+app.put('/memo', (req, res) => {
+    //const {mID, memo} = req.body
+    const data = req.body
+    if (!data || !data.mID || !data.memo) {
+        res.status(400).json({ error: "Corrupted or missing request data" })
+        return
+    }
+    if (data.memo.length > 160) {
+        res.status(400).json({ error: "Memo exceeds 160 characters" })
+        return
+    }
+    updateMemo(res, data.mID, data.memo)
 })
