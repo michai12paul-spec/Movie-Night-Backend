@@ -1,0 +1,34 @@
+const getRatedMovies = (res, type, page, rating) => {
+    moviesCollection
+
+        .find({ "imdb.rating": { $gte: rating } },
+        {
+            limit: 10,
+            skip: page,
+            sort: { year: -1 }
+        },
+
+           {
+                projection: {
+                    imdb: {rating: 1},
+                    year: 1,
+                    genres: 1,
+                    title: 1,
+                    released: 1,
+                   
+                }
+            }
+            
+        )
+        
+        .toArray()
+        .then(doc => {
+            if (!doc)
+                doc = { "error": "no data found" }
+            /*if (doc.released) {
+                doc.released = format(doc.released, "MMM DD, YYYY")
+                console.log(doc.released)
+            }*/
+            res.status(200).json(doc)
+        })
+    }

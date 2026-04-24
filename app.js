@@ -67,7 +67,7 @@ app.get("/:type/p:page", (req, res) => {
 
 app.get("/:rating/:type", (req, res) => {
     let rating = parseFloat(req.params.rating)
-    if (isNaN(rating)) {
+    if (isNaN(rating) || rating <= 0 || rating > 10) {
         res.status(400).send({ "error": "Invalid rating" })
         return
     }
@@ -76,5 +76,5 @@ app.get("/:rating/:type", (req, res) => {
         res.status(400).send({ "error": "Invalid URI" })
         return
     }
-    getRatedMovies(res, rating)
+    getRatedMovies(res, type, 0, rating)
 })

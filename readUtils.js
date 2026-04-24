@@ -80,39 +80,30 @@ const getFaves = (res) => {
 }
 
 
-const getRatedMovies = (res, type, page, rating) => {
+const getRatedMovies = (res, type, page, rating) => { 
     moviesCollection
-
-        .find({ "imdb.rating": { $gte: rating } },
-        {
-            limit: 10,
-            skip: page,
-            sort: { year: -1 }
-        },
-
-           {
+        .find(
+            { "imdb.rating": { $gte: 6 } },
+            {
+                limit: 10,
+                skip: page,
+                sort: { year: -1 },
                 projection: {
-                    imdb: {rating: 1},
+                    imdb: { rating: 1 },
                     year: 1,
                     genres: 1,
                     title: 1,
                     released: 1,
-                   
                 }
             }
-            
         )
-        
         .toArray()
         .then(doc => {
-            if (!doc)
-                doc = { "error": "no data found" }
-            /*if (doc.released) {
-                doc.released = format(doc.released, "MMM DD, YYYY")
-                console.log(doc.released)
-            }*/
+            if (!doc || doc.length === 0)
+                doc = { error: "no data found" }
+
             res.status(200).json(doc)
         })
-    }
+}
     
 export { getMovies, getMovie, getFaves, getRatedMovies }
