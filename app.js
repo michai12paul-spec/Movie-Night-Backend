@@ -1,7 +1,7 @@
 import express from 'express'
 import { PORT } from './config.js'
 import { getFaves, getMovie, getMovies, getRatedMovies } from './readUtils.js'
-import { addToFavs, updateMemo} from './createUtils.js'
+import { addToFavs, updateMemo } from './createUtils.js'
 import cors from 'cors'
 
 const app = express()
@@ -19,18 +19,47 @@ app.get('/test', (req, res) => {
     res.send('Test')
 })
 
-// Get a Movie/Series by id
-app.get("/info/:id", (req, res) => {
-    let movieID = req.params.id
-    if (!movieID || movieID.length != 24) {
-        res.status(400).send({ "error": "Invalid ID" })
+// Get 10 Movies/Series by pages 
+app.get("/:type/pg:page", (req, res) => {
+    const pageSize = 10
+    let page = parseInt(req.params.page)
+    let type = req.params.type.toLowerCase()
+
+    if (!page || isNaN(page) || page < 1) {
+        res.status(400).json({ error: "Invalid page" })
         return
     }
-    getMovie(res, movieID)
+
+    if (type !== "movie" && type !== "series") {
+        res.status(400).json({ error: "Invalid type" })
+        return
+    }
+
+    getMovies(res, type, page, pageSize)
 })
 
+// Get a Movie/Series by id
+app.get("/:type/:id", (req, res) => {
+    const type = req.params.type.toLowerCase()
+    const id = req.params.id
+
+    if (type !== "movie" && type !== "series") {
+        res.status(400).json({ error: "Invalid type" })
+        return
+    }
+
+    if (!id || id.length !== 24) {
+        res.status(400).json({ error: "Invalid ID" })
+        return
+    }
+
+    getMovie(res, id)
+})
+
+
+
 //Show all the favourites
-app.get("/faves/show", (req, res) => {
+app.get("/faves/series", (req, res) => {
     getFaves(res)
 })
 
@@ -43,7 +72,7 @@ app.post("/faves/add/:id", (req, res) => {
         addToFavs(res, showID)
 })
 
-// Get 10 Movies/Series
+/* Get 10 Movies/Series
 app.get("/:type", (req, res) => {
     let type = req.params.type.toLowerCase()
     if (type != "movie" && type != "series") {
@@ -52,24 +81,10 @@ app.get("/:type", (req, res) => {
     }
     getMovies(res, type)
 })
-// Get 10 Movies/Series by pages 
-app.get("/:type/p:page", (req, res) => {
-    const pageSize = 10
-    let type = req.params.type.toLowerCase()
-    if (type != "movie" && type != "series") {
-        res.status(400).send({ "error": "Invalid URI" })
-        return
-    }
-    let page = parseInt(req.params.page)
-    if (!page || isNaN(page) || page < 1) {
-        res.status(400).send({ "error": "Invalid URI" })
-        return
-    }
-    page = (page - 1) * pageSize
-    getMovies(res, type, page)
-})
+*/
 
-//Get 10 Movies/Series by rating abouve 6
+
+//Get 10 Movies/Series by rating above 6
 app.get("/:rating/:type", (req, res) => {
     let rating = parseFloat(req.params.rating)
     if (isNaN(rating) || rating <= 0 || rating > 10) {
@@ -77,7 +92,7 @@ app.get("/:rating/:type", (req, res) => {
         return
     }
     let type = req.params.type.toLowerCase()
-   if (type != "movie" && type != "series") {
+    if (type != "movie" && type != "series") {
         res.status(400).send({ "error": "Invalid URI" })
         return
     }

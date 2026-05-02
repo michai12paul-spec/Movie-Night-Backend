@@ -2,13 +2,16 @@ import { format } from "date-and-time"
 import { favCollection, moviesCollection } from "./myMongo.js"
 import { ObjectId } from "mongodb"
 
-const getMovies = (res, type, page = 0) => {
+const getMovies = (res, type, page = 1, pageSize = 9) => {
+
+    let numDocstoSkip = (page - 1) * pageSize
+
     moviesCollection
         .find({
             type: type
         }, {
             limit: 10,
-            skip: page,
+            skip: numDocstoSkip,
             sort: { year: -1 }
         })
         .project({
