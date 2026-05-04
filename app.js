@@ -1,7 +1,7 @@
 import express from 'express'
 import { PORT } from './config.js'
 import { getFaves, getMovie, getMovies, getRatedMovies } from './readUtils.js'
-import { addToFavs, updateMemo } from './createUtils.js'
+import { addToFavs, updateMemo } from './myFaves.js'
 import cors from 'cors'
 
 const app = express()
