@@ -10,7 +10,7 @@ const getMovies = (res, type, page = 1, pageSize = 9) => {
         .find({
             type: type
         }, {
-            limit: 10,
+            limit: 12,
             skip: numDocstoSkip,
             sort: { year: -1 }
         })
