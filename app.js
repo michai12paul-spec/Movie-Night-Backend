@@ -20,12 +20,17 @@ app.get('/test', (req, res) => {
 })
 
 // Get 10 Movies/Series by pages 
-app.get("/:type/pg:page", (req, res) => {
+app.get("/:type/:page", (req, res) => {
     const pageSize = 10
     let page = parseInt(req.params.page)
     let type = req.params.type.toLowerCase()
 
     if (!page || isNaN(page) || page < 1) {
+        res.status(400).json({ error: "Invalid page" })
+        return
+    }
+
+    if (!page || isNaN(page) || page < 1 || page > 999) {
         res.status(400).json({ error: "Invalid page" })
         return
     }
