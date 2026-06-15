@@ -20,14 +20,23 @@ app.get('/test', (req, res) => {
 })
 
 // Get a Movie/Series by id
-app.get("/:type/view/:id", (req, res) => {
-    const type = req.params.type.toLowerCase()
+app.get("/series/view/:id", (req, res) => {
+    
     const id = req.params.id
 
-    if (type !== "movie" && type !== "series") {
-        res.status(400).json({ error: "Invalid type" })
+    if (!id || id.length !== 24) {
+        res.status(400).json({ error: "Invalid ID" })
         return
     }
+
+    getMovie(res, id)
+})
+
+// Get a Movie/Series by id
+app.get("/movie/view/:id", (req, res) => {
+    
+    const id = req.params.id
+
 
     if (!id || id.length !== 24) {
         res.status(400).json({ error: "Invalid ID" })
