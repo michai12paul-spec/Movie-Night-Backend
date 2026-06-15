@@ -19,8 +19,26 @@ app.get('/test', (req, res) => {
     res.send('Test')
 })
 
+// Get a Movie/Series by id
+app.get("/:type/view/:id", (req, res) => {
+    const type = req.params.type.toLowerCase()
+    const id = req.params.id
+
+    if (type !== "movie" && type !== "series") {
+        res.status(400).json({ error: "Invalid type" })
+        return
+    }
+
+    if (!id || id.length !== 24) {
+        res.status(400).json({ error: "Invalid ID" })
+        return
+    }
+
+    getMovie(res, id)
+})
+
 // Get 10 Movies/Series by pages 
-app.get("/:type/:page", (req, res) => {
+app.get("/:type/paginate/:page", (req, res) => {
     const pageSize = 10
     let page = parseInt(req.params.page)
     let type = req.params.type.toLowerCase()
@@ -42,26 +60,6 @@ app.get("/:type/:page", (req, res) => {
 
     getMovies(res, type, page, pageSize)
 })
-
-// Get a Movie/Series by id
-app.get("/:type/:id", (req, res) => {
-    const type = req.params.type.toLowerCase()
-    const id = req.params.id
-
-    if (type !== "movie" && type !== "series") {
-        res.status(400).json({ error: "Invalid type" })
-        return
-    }
-
-    if (!id || id.length !== 24) {
-        res.status(400).json({ error: "Invalid ID" })
-        return
-    }
-
-    getMovie(res, id)
-})
-
-
 
 //Show all the favourites
 app.get("/faves/series", (req, res) => {
