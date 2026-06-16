@@ -1,7 +1,7 @@
 import express from 'express'
 import { PORT } from './config.js'
 import { getFaves, getMovie, getMovies, getRatedMovies } from './readUtils.js'
-import { addToFavs, updateMemo } from './myFaves.js'
+import { addToFaves, updateFaves, deletefromFaves } from './myFaves.js'
 import cors from 'cors'
 
 const app = express()
@@ -81,7 +81,7 @@ app.post("/faves/add/:id", (req, res) => {
     if (!showID || showID.length != 24)
         res.status(400).send({ error: "Invalid ID" })
     else
-        addToFavs(res, showID)
+        addToFaves(res, showID)
 })
 
 /* Get 10 Movies/Series
@@ -122,11 +122,11 @@ app.put('/memo', (req, res) => {
         res.status(400).json({ error: "Memo exceeds 160 characters" })
         return
     }
-    updateMemo(res, data.mID, data.memo)
+    updateFavs(res, data.mID, data.memo)
 })
 
 //Delete a movie/series from the favourites list by id
-app.delete('/faves/remove', (req, res) => {
-    const data = req.body
-    deleteFromFaves(res, data.aID)
+app.delete('/faves/remove/:id', (req, res) => {
+    const id = req.params.id
+    deleteFromFaves(res, id)
 })

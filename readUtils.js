@@ -71,9 +71,9 @@ const getMovie = (res, movieID) => {
 }
 
 // retrieve all the favourites
-const getFaves = (res) => {
-    favCollection
-        .find({})
+const getFaves = (res, showID) => {
+    moviesCollection
+        .find({ showID: { $exists: true } })
         .toArray()
         .then(favDocs => {
             if (!favDocs)
@@ -81,7 +81,6 @@ const getFaves = (res) => {
             res.status(200).json(favDocs)
         })
 }
-
 
 const getRatedMovies = (res, type, page, rating) => { 
     moviesCollection
