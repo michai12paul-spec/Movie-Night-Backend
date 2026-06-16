@@ -1,35 +1,55 @@
 import { favCollection } from "./myMongo.js"
 
 
-
+// Add a movie to the favourites list by id
 const addToFavs = async (res, id) => {
-    favoritesCollection
-        .countDocuments(
-            { showID: id })
-        .then(countresults => {
-            if (!countresults) {
-                favoritesCollection.insertOne({
-                    showID: new ObjectId(id),
-                    note: "",
-                    watched: false
-                })
-                    .then(result => {
-                        if (result.insertedId)
-                            res.status(200).json({ "msg": "Show added to favorites" })
-                        else
-                            res.status(500).json({ "error": "Failed to add show to favorites" })
-                    })
-            }
-            else
-                res.status(200).json({ "error": "Show already in favorites" })
-        })
-}
+    try {
+        
+        const exists = await favCollection.findOne({ showID: id });
 
+        if (exists) {
+            return res.status(200).json({ error: "Show already in favourites" });
+        }
 
+        const response = await fetch(`http://localhost:2811/shows/${id}`);
+        const showData = await response.json();
 
+        if (!showData) {
+            return res.status(404).json({ error: "Show not found" });
+        }
+
+        
+        const favDoc = {
+            showID: id,
+            title: 1,
+            poster: 1,
+            genres: 1,
+            plot: 1,
+            year: 1,
+            runtime: 1,
+        };
+
+       
+        const result = await favCollection.insertOne(favDoc);
+
+        if (result.insertedId) {
+            return res.status(200).json({ message: "Show added to favourites" });
+        }
+
+        return res.status(500).json({ error: "Failed to add show to favourites" });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error" });
+    }
+};
 
 const updateMemo = (res, mID, theMemo) => {
+    
+    // convert mID to ObjectID
     mID = new ObjectId(mID)
+
+    // update the memo field with the new value.
     const query = { _id: mID }
     const updateData = {
         $set: {
