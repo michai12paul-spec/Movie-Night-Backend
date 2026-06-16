@@ -39,7 +39,7 @@ const getMovies = (res, type, page = 1, pageSize = 9) => {
         })
 }
 
-// retrieve a single movie by it's ID
+
 const getMovie = (res, movieID) => {
     moviesCollection
         .findOne(
@@ -70,10 +70,19 @@ const getMovie = (res, movieID) => {
         })
 }
 
-// retrieve all the favourites
+
 const getFaves = (res) => {
     favCollection
         .find({})
+        .project({
+            plot: 1,
+            poster: 1,
+            genres: 1,
+            runtime: 1,
+            title: 1,
+            year: 1,
+            poster: 1
+        })
         .toArray()
         .then(favDocs => {
             if (!favDocs)

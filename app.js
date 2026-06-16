@@ -71,7 +71,7 @@ app.get("/:type/paginate/:page", (req, res) => {
 })
 
 //Show all the favourites
-app.get("/faves/series", (req, res) => {
+app.get("/faves/all", (req, res) => {
     getFaves(res)
 })
 

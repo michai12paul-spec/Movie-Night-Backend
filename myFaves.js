@@ -1,31 +1,35 @@
 import { favCollection } from "./myMongo.js"
 
 
-// Add a movie to the favourites list by id
-const addToFavs = (res, id) => {
-    favCollection
-        .countDocuments({ showID: id })
-        .then(countResult => {
-            if (!countResult) {
-                favCollection.insertOne({ showID: id })
+
+const addToFavs = async (res, id) => {
+    favoritesCollection
+        .countDocuments(
+            { showID: id })
+        .then(countresults => {
+            if (!countresults) {
+                favoritesCollection.insertOne({
+                    showID: new ObjectId(id),
+                    note: "",
+                    watched: false
+                })
                     .then(result => {
                         if (result.insertedId)
-                            res.status(200).json({ message: "Show added to favourites" })
+                            res.status(200).json({ "msg": "Show added to favorites" })
                         else
-                            res.status(500).json({ error: "Failed to add show to favourites" })
+                            res.status(500).json({ "error": "Failed to add show to favorites" })
                     })
             }
             else
-                res.status(200).json({ error: "Show already in favourites" })
+                res.status(200).json({ "error": "Show already in favorites" })
         })
 }
 
-const updateMemo = (res, mID, theMemo) => {
-    
-    // convert mID to ObjectID
-    mID = new ObjectId(mID)
 
-    // update the memo field with the new value.
+
+
+const updateMemo = (res, mID, theMemo) => {
+    mID = new ObjectId(mID)
     const query = { _id: mID }
     const updateData = {
         $set: {
